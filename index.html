@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LL(1) Parsing Table Generator</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #8b0000;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        header p {
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        .container {
+            width: 85%;
+            max-width: 1100px;
+            margin: 35px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+            color: #8b0000;
+            margin-top: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 220px;
+            padding: 15px;
+            font-size: 16px;
+            font-family: Consolas, monospace;
+            border: 1px solid #999;
+            border-radius: 6px;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border: 2px solid #8b0000;
+        }
+
+        button {
+            background: #8b0000;
+            color: white;
+            border: none;
+            padding: 13px 25px;
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        button:hover {
+            background: #b22222;
+        }
+
+        .result {
+            margin-top: 35px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 15px;
+            background: white;
+        }
+
+        th,
+        td {
+            border: 1px solid #999;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background: #8b0000;
+            color: white;
+            font-weight: bold;
+        }
+
+        td {
+            background: #fafafa;
+        }
+
+        .section {
+            margin-top: 35px;
+        }
+
+        .success {
+            background: #e8f5e9;
+            border-left: 5px solid green;
+            padding: 12px;
+            margin-top: 20px;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 12px;
+            margin-top: 15px;
+        }
+
+        .example {
+            margin-top: 10px;
+            color: #555;
+        }
+
+        code {
+            background: #eee;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>LL(1) Parsing Table Generator</h1>
+
+    <p>Compiler Design Mini Project</p>
+
+</header>
+
+
+<div class="container">
+
+
+    <h2>Enter Context Free Grammar</h2>
+
+
+    <p class="example">
+        Use <code>#</code> for epsilon (ε).
+    </p>
+
+
+    <form method="POST">
+
+
+        <textarea
+            name="grammar"
+            placeholder="Example:
+E -> T E'
+E' -> + T E' | #
+T -> F T'
+T' -> * F T' | #
+F -> ( E ) | id"
+            required>{{ grammar_text }}</textarea>
+
+
+        <br>
+
+
+        <button type="submit">
+            Generate FIRST &amp; FOLLOW
+        </button>
+
+
+    </form>
+
+
+
+    {% if first %}
+
+    <div class="result">
+
+
+        <div class="success">
+
+            <strong>Success!</strong>
+
+            FIRST and FOLLOW sets have been generated.
+
+        </div>
+
+
+        <!-- FIRST -->
+
+        <div class="section">
+
+            <h2>FIRST Sets</h2>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <tr>
+
+                        <th>Non-Terminal</th>
+
+                        <th>FIRST</th>
+
+                    </tr>
+
+
+                    {% for symbol, values in first.items() %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ symbol }}</strong>
+                        </td>
+
+                        <td>
+                            { {{ values | sort | join(", ") }} }
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- FOLLOW -->
+
+        <div class="section">
+
+            <h2>FOLLOW Sets</h2>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <tr>
+
+                        <th>Non-Terminal</th>
+
+                        <th>FOLLOW</th>
+
+                    </tr>
+
+
+                    {% for symbol, values in follow.items() %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ symbol }}</strong>
+                        </td>
+
+                        <td>
+                            { {{ values | sort | join(", ") }} }
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <div class="note">
+
+            <strong>Next Step:</strong>
+
+            LL(1) Parsing Table will be generated from
+            FIRST and FOLLOW sets.
+
+        </div>
+
+
+    </div>
+
+    {% endif %}
+
+
+</div>
+
+
+</body>
+
+</html>
